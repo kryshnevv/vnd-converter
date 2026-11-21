@@ -1,0 +1,45 @@
+name: Build iPhone icon
+on:
+  push:
+    paths:
+      - '.github/workflows/iphone-icon.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create Vietnam flag PNG
+        run: |
+          python3 - <<'PY'
+          import math, struct, zlib
+          n=180
+          pts=[]
+          for i in range(10):
+              a=-math.pi/2+i*math.pi/5
+              r=68 if i%2==0 else 26
+              pts.append((90+math.cos(a)*r,90+math.sin(a)*r))
+          def star(x,y):
+              inside=False
+              for i in range(10):
+                  x1,y1=pts[i];x2,y2=pts[(i+1)%10]
+                  if (y1>y)!=(y2>y) and x<(x2-x1)*(y-y1)/(y2-y1)+x1:inside=not inside
+              return inside
+          raw=bytearray()
+          for y in range(n):
+              raw.append(0)
+              for x in range(n):
+                  raw.extend((255,223,0,255) if star(x+.5,y+.5) else (218,37,29,255))
+          def chunk(t,d):
+              return struct.pack('!I',len(d))+t+d+struct.pack('!I',zlib.crc32(t+d)&0xffffffff)
+          png=b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',struct.pack('!2I5B',n,n,8,6,0,0,0))+chunk(b'IDAT',zlib.compress(raw,9))+chunk(b'IEND',b'')
+          open('apple-touch-icon.png','wb').write(png)
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apple-touch-icon.png
+          git diff --cached --quiet || (git commit -m "Add PNG iPhone icon" && git push)
