@@ -1,1 +1,1 @@
-{"name":"Конвертер донгов","short_name":"Донги","start_url":"./index.html","scope":"./","display":"standalone","background_color":"#f5f7fb","theme_color":"#f5f7fb","icons":[{"src":"./icon.svg","sizes":"any","type":"image/svg+xml"}]}
+{"name":"Конвертер донгов","short_name":"Донги","start_url":"./index.html","scope":"./","display":"standalone","background_color":"#f5f7fb","theme_color":"#f5f7fb","icons":[{"src":"./apple-touch-icon.png","sizes":"180x180","type":"image/png"},{"src":"./icon.svg","sizes":"any","type":"image/svg+xml"}]}
